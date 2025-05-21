@@ -8,7 +8,7 @@ require('dotenv').config(); // Load env variables from .env
 // START HTTP SERVER
 const app = express();
 const port = process.env.HTTP_PORT || 3001;
-const WS_PORT =  process.env.WS_PORT || 3000;
+const WS_PORT = process.env.WS_PORT || 3000;
 app.use(express.json());
 app.use('/', httpRouter);
 
@@ -62,9 +62,7 @@ wss.on('connection', (ws) => {
         break;
 
       case 'game_finished':
-        if (msg.data) {
-          matchmaking.broadcastGameFinished(ws, msg.data);
-        }
+        matchmaking.broadcastGameFinished(ws, msg);
         break;
 
       default:

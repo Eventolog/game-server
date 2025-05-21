@@ -83,7 +83,7 @@ class Matchmaking {
 
     room.players.forEach(playerWs => {
       if (playerWs.readyState === playerWs.OPEN) {
-        playerWs.send(JSON.stringify({ type: 'game_finished', data }));
+        playerWs.send(JSON.stringify(data));
       }
     });
   }
