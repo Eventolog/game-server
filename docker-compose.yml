@@ -1,0 +1,26 @@
+services:
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: rankings
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  nodejs-server:
+    build: ./    # assumes your Node.js app is in ./server directory
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "${HTTP_PORT}:${HTTP_PORT}"
+      - "${WS_PORT}:${WS_PORT}"
+    depends_on:
+      - postgres
+
+volumes:
+  pgdata:
