@@ -12,7 +12,7 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   nodejs-server:
-    build: ./    # assumes your Node.js app is in ./server directory
+    build: ./
     restart: always
     env_file:
       - .env
@@ -21,6 +21,19 @@ services:
       - "${WS_PORT}:${WS_PORT}"
     depends_on:
       - postgres
-
-volumes:
-  pgdata:
+    command: >
+      sh -c "
+        echo 'Esperant 10 segons abans del primer intent...';
+        sleep 10;
+        for i in 1 2 3; do
+          nc -z postgres 5432 && break;
+          echo 'No es pot connectar a postgres:5432. Reintent $i de 3...';
+          sleep 5;
+        done;
+        if ! nc -z postgres 5432; then
+          echo 'PostgreSQL no està disponible. Abortant.';
+          exit 1;
+        fi;
+        echo 'Base de dades disponible. Arrencant app...';
+        npm start
+      "
